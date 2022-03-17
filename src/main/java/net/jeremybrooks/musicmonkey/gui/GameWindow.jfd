@@ -1,0 +1,136 @@
+JFDML JFormDesigner: "7.0.5.1.409" Java: "11.0.13" encoding: "UTF-8"
+
+new FormModel {
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormWindow( "javax.swing.JFrame", new FormLayoutManager( class java.awt.GridBagLayout ) {
+			"$columnSpecs": "0, 0, 0"
+			"$rowSpecs": "0, 0, 0, 0"
+			"$hGap": 5
+			"$vGap": 5
+			"$alignLeft": true
+			"$alignTop": true
+		} ) {
+			name: "this"
+			"$sizePolicy": 2
+			"resizable": false
+			"$locationPolicy": 2
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "lblP1"
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+				"insets": new java.awt.Insets( 10, 10, 10, 10 )
+				"hAlign": 2
+				"vAlign": 1
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "lblP2"
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+				"gridx": 2
+				"hAlign": 4
+				"vAlign": 1
+				"insets": new java.awt.Insets( 10, 10, 10, 10 )
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "lblP3"
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+				"gridy": 3
+				"insets": new java.awt.Insets( 10, 10, 10, 10 )
+				"hAlign": 2
+				"vAlign": 3
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "lblP4"
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+				"gridx": 2
+				"gridy": 3
+				"hAlign": 4
+				"vAlign": 3
+				"insets": new java.awt.Insets( 10, 10, 10, 10 )
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "lblP1Score"
+				"text": "0"
+				"horizontalAlignment": 0
+				"font": &SwingDerivedFont0 new com.jformdesigner.model.SwingDerivedFont( "Monoton", 0, 32, true )
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+				"gridy": 1
+				"vAlign": 1
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "lblP2Score"
+				"text": "0"
+				"horizontalAlignment": 0
+				"font": #SwingDerivedFont0
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+				"gridx": 2
+				"gridy": 1
+				"vAlign": 1
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "lblP3Score"
+				"text": "0"
+				"horizontalAlignment": 0
+				"font": #SwingDerivedFont0
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+				"gridy": 2
+				"vAlign": 3
+				"weighty": 1.0
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "lblP4Score"
+				"text": "0"
+				"horizontalAlignment": 0
+				"font": #SwingDerivedFont0
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+				"gridx": 2
+				"gridy": 2
+				"vAlign": 3
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "lblTimer"
+				"text": "100"
+				"font": new com.jformdesigner.model.SwingDerivedFont( "Monoton", 0, 32, true )
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+				"gridx": 1
+				"hAlign": 0
+			} )
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
+				"$columnSpecs": "0"
+				"$rowSpecs": "0"
+				"$hGap": 5
+				"$vGap": 5
+				"$alignTop": true
+				"$alignLeft": true
+			} ) {
+				name: "panel1"
+				add( new FormComponent( "javax.swing.JList" ) {
+					name: "listSongs"
+					"enabled": false
+					auxiliary() {
+						"JavaCodeGenerator.postInitCode": "listSongs.setModel(songListModel);\nlistSongs.setCellRenderer(new SongDisplay());"
+					}
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"weightx": 1.0
+					"weighty": 10.0
+				} )
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+				"gridx": 1
+				"weightx": 1.0
+				"gridy": 1
+				"gridheight": 2
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "lblMessage"
+				"text": " "
+				"font": new com.jformdesigner.model.SwingDerivedFont( "Monoton", 0, 32, true )
+				"horizontalAlignment": 0
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+				"gridx": 1
+				"gridy": 3
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 0, 0 )
+			"size": new java.awt.Dimension( 490, 415 )
+		} )
+	}
+}

@@ -1,0 +1,142 @@
+JFDML JFormDesigner: "7.0.5.1.409" Java: "11.0.13" encoding: "UTF-8"
+
+new FormModel {
+	"i18n.autoExternalize": true
+	"i18n.bundlePackage": "net.jeremybrooks.musicmonkey"
+	"i18n.bundleName": "mainwindow"
+	"i18n.keyPrefix": "MainWindow"
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormWindow( "javax.swing.JFrame", new FormLayoutManager( class java.awt.GridBagLayout ) {
+			"$columnSpecs": "0, 0, 0:1.0"
+			"$rowSpecs": "0, 0:1.0, 0"
+			"$alignTop": true
+			"$alignLeft": true
+		} ) {
+			name: "this"
+			"$sizePolicy": 2
+			"font": new java.awt.Font( "Lucida Grande", 0, 48 )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label1"
+				"text": "MUSIC MONKEY"
+				"horizontalAlignment": 0
+				"font": new com.jformdesigner.model.SwingDerivedFont( "Monoton", 0, 70, true )
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+				"gridx": 1
+				"hAlign": 0
+				"vAlign": 0
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "lblP1"
+				auxiliary() {
+					"JavaCodeGenerator.postCreateCode": "lblP1.setIcon(MMConstants.ICON_P1_OFF);"
+				}
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+				"hAlign": 2
+				"vAlign": 1
+				"insets": new java.awt.Insets( 10, 10, 10, 10 )
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "lblP2"
+				auxiliary() {
+					"JavaCodeGenerator.postCreateCode": "lblP2.setIcon(MMConstants.ICON_P2_OFF);"
+				}
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+				"gridx": 2
+				"hAlign": 4
+				"vAlign": 1
+				"insets": new java.awt.Insets( 10, 10, 10, 10 )
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "lblP3"
+				auxiliary() {
+					"JavaCodeGenerator.postCreateCode": "lblP3.setIcon(MMConstants.ICON_P3_OFF);"
+				}
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+				"gridy": 1
+				"hAlign": 2
+				"vAlign": 3
+				"insets": new java.awt.Insets( 10, 10, 10, 10 )
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "lblP4"
+				auxiliary() {
+					"JavaCodeGenerator.postCreateCode": "lblP4.setIcon(MMConstants.ICON_P4_OFF);"
+				}
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+				"gridx": 2
+				"gridy": 1
+				"hAlign": 4
+				"vAlign": 3
+				"insets": new java.awt.Insets( 10, 10, 10, 10 )
+			} )
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
+				"$columnSpecs": "0"
+				"$rowSpecs": "0, 0, 0, 0, 0"
+				"$hGap": 5
+				"$vGap": 5
+				"$alignLeft": true
+				"$alignTop": true
+			} ) {
+				name: "panel1"
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "lblJoin"
+					"text": "Join/Leave Game"
+					"font": &SwingDerivedFont0 new com.jformdesigner.model.SwingDerivedFont( "Monoton", 0, 30, true )
+					auxiliary() {
+						"JavaCodeGenerator.postCreateCode": "lblJoin.setIcon(MMConstants.BUTTON_0);"
+					}
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"insets": new java.awt.Insets( 0, 50, 0, 0 )
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "lblMusic"
+					"text": "Change Music"
+					"font": #SwingDerivedFont0
+					auxiliary() {
+						"JavaCodeGenerator.postCreateCode": "lblMusic.setIcon(MMConstants.BUTTON_1);"
+					}
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridy": 1
+					"insets": new java.awt.Insets( 0, 50, 0, 0 )
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "lblMusicSelection"
+					"text": new FormMessage( null, "MainWindow.lblMusicSelection.text" )
+					"font": new com.jformdesigner.model.SwingDerivedFont( "Monoton", 0, 24, true )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridy": 2
+					"insets": new java.awt.Insets( 0, 160, 0, 0 )
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "lblSomething"
+					"text": new FormMessage( null, "MainWindow.lblSomething.text" )
+					"font": #SwingDerivedFont0
+					auxiliary() {
+						"JavaCodeGenerator.postCreateCode": "lblSomething.setIcon(MMConstants.BUTTON_3);"
+					}
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridy": 3
+					"insets": new java.awt.Insets( 0, 50, 0, 0 )
+				} )
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+				"gridx": 1
+				"gridy": 1
+				"weightx": 1.0
+				"weighty": 1.0
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "lblMessage"
+				"text": " "
+				"font": new com.jformdesigner.model.SwingDerivedFont( "Monoton", 0, 30, true )
+				"horizontalAlignment": 0
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+				"gridx": 1
+				"gridy": 2
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 5, 5 )
+			"size": new java.awt.Dimension( 745, 410 )
+		} )
+	}
+}

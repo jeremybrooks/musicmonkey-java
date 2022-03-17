@@ -1,0 +1,82 @@
+JFDML JFormDesigner: "7.0.5.1.409" Java: "11.0.13" encoding: "UTF-8"
+
+new FormModel {
+	"i18n.autoExternalize": true
+	"i18n.bundlePackage": "net.jeremybrooks.musicmonkey"
+	"i18n.bundleName": "musicselectionwindow"
+	"i18n.keyPrefix": "MusicSelectionWindow"
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormWindow( "javax.swing.JFrame", new FormLayoutManager( class java.awt.GridBagLayout ) {
+			"$columnSpecs": "0, 0"
+			"$rowSpecs": "0, 0, 0, 0"
+			"$hGap": 5
+			"$vGap": 5
+			"$alignLeft": true
+			"$alignTop": true
+		} ) {
+			name: "this"
+			"$sizePolicy": 2
+			"$locationPolicy": 2
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "lblHeading"
+				"text": new FormMessage( null, "MusicSelectionWindow.lblHeading.text" )
+				"font": new com.jformdesigner.model.SwingDerivedFont( "Monoton", 0, 48, true )
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+				"hAlign": 0
+				"vAlign": 0
+			} )
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
+				"$columnSpecs": "0"
+				"$rowSpecs": "0, 0, 0, 0, 0, 0, 0, 0"
+				"$hGap": 5
+				"$vGap": 5
+				"$alignLeft": true
+				"$alignTop": true
+			} ) {
+				name: "pnlMusic"
+				"border": new javax.swing.border.LineBorder( sfield java.awt.Color black, 3, true )
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+				"gridy": 1
+				"gridheight": 3
+				"weightx": 1.0
+				"vAlign": 0
+				"weighty": 1.0
+				"insets": new java.awt.Insets( 0, 10, 0, 0 )
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "lblButtonUp"
+				"text": new FormMessage( null, "MusicSelectionWindow.lblButtonUp.text" )
+				auxiliary() {
+					"JavaCodeGenerator.postCreateCode": "lblButtonUp.setIcon(MMConstants.BUTTON_0);"
+				}
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+				"gridx": 1
+				"gridy": 1
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "lblButtonDown"
+				"text": new FormMessage( null, "MusicSelectionWindow.lblButtonDown.text" )
+				auxiliary() {
+					"JavaCodeGenerator.postCreateCode": "lblButtonDown.setIcon(MMConstants.BUTTON_1);"
+				}
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+				"gridx": 1
+				"gridy": 2
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "lblButtonSelect"
+				"text": new FormMessage( null, "MusicSelectionWindow.lblButtonSelect.text" )
+				auxiliary() {
+					"JavaCodeGenerator.postCreateCode": "lblButtonSelect.setIcon(MMConstants.BUTTON_3);"
+				}
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+				"gridx": 1
+				"gridy": 3
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 0, 0 )
+			"size": new java.awt.Dimension( 515, 390 )
+		} )
+	}
+}
