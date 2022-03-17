@@ -21,11 +21,14 @@ package net.jeremybrooks.musicmonkey;
 
 import net.jeremybrooks.pressplay.FFProbe;
 import net.jeremybrooks.pressplay.MediaMetadata;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.nio.file.Path;
 
 public class Song {
+  private static final Logger logger = LogManager.getLogger();
   private MediaMetadata metadata;
   private boolean playing;
   private boolean showTitle = true;
@@ -37,7 +40,7 @@ public class Song {
     try {
       this.metadata = FFProbe.getMediaMetadata(songPath.toString());
     } catch (IOException ioe) {
-      // todo log warning
+      logger.warn("Error getting metadata for song {}", songPath);
       this.metadata = new MediaMetadata();
     }
   }

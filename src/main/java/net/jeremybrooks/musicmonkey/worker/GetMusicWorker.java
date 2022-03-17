@@ -23,6 +23,8 @@ import net.jeremybrooks.musicmonkey.GameState;
 import net.jeremybrooks.musicmonkey.MMConstants;
 import net.jeremybrooks.musicmonkey.MusicLister;
 import net.jeremybrooks.musicmonkey.gui.GameWindow;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.swing.*;
 import java.nio.file.Files;
@@ -32,15 +34,15 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class GetMusicWorker extends SwingWorker<List<Path>, Void> {
-
-    private GameWindow gameWindow;
+    private static final Logger logger = LogManager.getLogger();
+    private final GameWindow gameWindow;
 
     public GetMusicWorker(GameWindow gameWindow) {
         this.gameWindow = gameWindow;
     }
 
     @Override
-    protected List<Path> doInBackground() throws Exception {
+    protected List<Path> doInBackground() {
         gameWindow.showMessage("Gathering music....");
         List<Path> availableSongList = null;
         Path musicDir;
@@ -54,8 +56,7 @@ public class GetMusicWorker extends SwingWorker<List<Path>, Void> {
             Files.walkFileTree(musicDir, lister);
             availableSongList = lister.getSongList();
         } catch (Exception e) {
-            // todo
-//            logger.error("Error getting music for {}", musicDir, e);
+            logger.error("Error getting music for {}", musicDir, e);
         }
         return availableSongList;
     }
@@ -66,10 +67,8 @@ public class GetMusicWorker extends SwingWorker<List<Path>, Void> {
             gameWindow.setAvailableSongList(get());
             gameWindow.showMessage("");
             gameWindow.startGame();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
+        } catch (InterruptedException | ExecutionException e) {
+            logger.warn("Error in music worker", e);
         }
     }
 }
