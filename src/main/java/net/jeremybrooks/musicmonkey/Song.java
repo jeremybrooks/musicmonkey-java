@@ -28,72 +28,119 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 public class Song {
-  private static final Logger logger = LogManager.getLogger();
-  private MediaMetadata metadata;
-  private boolean playing;
-  private boolean showTitle = true;
-  private boolean showArtist = false;
-  private final Path songPath;
+    private static final Logger logger = LogManager.getLogger();
+    private boolean playing;
+    private boolean showTitle = true;
+    private boolean showArtist = false;
+    private Path songPath;
+    private String category;
+    private String artist;
+    private String title;
+    private long duration;
+    private int songId;
 
-  public Song(Path songPath) {
-    this.songPath = songPath;
-    try {
-      this.metadata = FFProbe.getMediaMetadata(songPath.toString());
-    } catch (IOException ioe) {
-      logger.warn("Error getting metadata for song {}", songPath);
-      this.metadata = new MediaMetadata();
+
+    public Song() {
     }
-  }
 
-  public Path getSongPath() {
-    return songPath;
-  }
+    public Song(Path songPath) throws IOException {
+        this.songPath = songPath;
+        this.songId = songPath.toString().hashCode();
+        category = songPath.getName(songPath.getNameCount() - 2).toString();
+        try {
+            MediaMetadata metadata = FFProbe.getMediaMetadata(songPath.toString());
+            artist = metadata.getArtist();
+            title = metadata.getTitle();
+            duration = metadata.getDuration().toMillis();
+        } catch (IOException ioe) {
+            logger.warn("Error getting metadata for song {}", songPath);
+            throw ioe;
+        }
+    }
 
-  public boolean isPlaying() {
-    return playing;
-  }
+    public int getSongId() {
+        return songId;
+    }
+    public void setSongId(int songId) {
+        this.songId = songId;
+    }
 
-  public void setPlaying(boolean playing) {
-    this.playing = playing;
-  }
+    public Path getSongPath() {
+        return songPath;
+    }
+    public void setSongPath(Path songPath) {
+        this.songPath = songPath;
+    }
 
-  public boolean isShowArtist() {
-    return showArtist;
-  }
+    public boolean isPlaying() {
+        return playing;
+    }
 
-  public void setShowArtist(boolean showArtist) {
-    this.showArtist = showArtist;
-  }
+    public void setPlaying(boolean playing) {
+        this.playing = playing;
+    }
 
-  public String getArtist() {
-    return metadata.getArtist();
-  }
+    public boolean isShowArtist() {
+        return showArtist;
+    }
 
-  public String getTitle() {
-    return metadata.getTitle();
-  }
+    public void setShowArtist(boolean showArtist) {
+        this.showArtist = showArtist;
+    }
 
-  public void revealAnswer() {
-    showArtist = isPlaying();
-    showTitle = isPlaying();
-  }
+    public String getArtist() {
+        return artist;
+    }
 
-  public void hide() {
-    showArtist = false;
-    showTitle = false;
-  }
+    public void setArtist(String artist) {
+        this.artist = artist;
+    }
 
-  public boolean isVisible() {
-    return showTitle || showArtist;
-  }
+    public String getTitle() {
+        return title;
+    }
 
-  public boolean isShowTitle() {
-    return showTitle;
-  }
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-  public void setShowTitle(boolean showTitle) {
-    this.showTitle = showTitle;
-  }
+    public long getDuration() {
+        return duration;
+    }
+
+    public void setDuration(long duration) {
+        this.duration = duration;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public void revealAnswer() {
+        showArtist = isPlaying();
+        showTitle = isPlaying();
+    }
+
+    public void hide() {
+        showArtist = false;
+        showTitle = false;
+    }
+
+    public boolean isVisible() {
+        return showTitle || showArtist;
+    }
+
+    public boolean isShowTitle() {
+        return showTitle;
+    }
+
+    public void setShowTitle(boolean showTitle) {
+        this.showTitle = showTitle;
+    }
 }
 
 

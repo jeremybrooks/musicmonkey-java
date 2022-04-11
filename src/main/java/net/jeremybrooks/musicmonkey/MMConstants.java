@@ -93,5 +93,6 @@ public class MMConstants {
           IMAGE_RESOURCE_PATH + "button-dark-blue-100.png"));
 
 
-  public static final String MUSIC_FOLDER = System.getProperty("user.home") + "/MusicMonkeyMusic";
+  public static final String MUSIC_DIRECTORY = System.getProperty("user.home") + "/MusicMonkeyMusic";
+  public static final String MUSIC_DB = System.getProperty("user.home") + "/MusicMonkeyDB/derbyDB";
 }

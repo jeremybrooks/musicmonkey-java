@@ -23,9 +23,9 @@
 
 package net.jeremybrooks.musicmonkey.gui;
 
-import javax.swing.*;
 import net.jeremybrooks.musicmonkey.GameState;
 import net.jeremybrooks.musicmonkey.MMConstants;
+import net.jeremybrooks.musicmonkey.db.DbUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -72,6 +72,12 @@ public class MainWindow extends MusicMonkeyFrame {
   @Override
   public void handleKeypress(KeyEvent e) {
     switch (e.getKeyChar()) {
+
+      case '0':
+        DbUtil.shutdown();
+        System.exit(0);
+        break;
+
       case MMConstants.P1B1:
         GameState.getInstance().setPlayerJoined(GameState.PlayerId.ONE, !GameState.getInstance().isPlayerJoined(GameState.PlayerId.ONE));
         lblP1.setIcon(GameState.getInstance().isPlayerJoined(GameState.PlayerId.ONE)

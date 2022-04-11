@@ -94,13 +94,13 @@ public class MusicSelectionWindow extends MusicMonkeyFrame {
 
     musicList.add("All Music");
     try {
-      musicList.addAll(Files.list(Paths.get(MMConstants.MUSIC_FOLDER))
+      musicList.addAll(Files.list(Paths.get(MMConstants.MUSIC_DIRECTORY))
           .filter(Files::isDirectory)
               .map(path -> path.getFileName().toString())
               .sorted()
           .toList());
     } catch (Exception e) {
-       logger.warn("Error getting a list from directory {}", MMConstants.MUSIC_FOLDER, e);
+       logger.warn("Error getting a list from directory {}", MMConstants.MUSIC_DIRECTORY, e);
     }
     
     for (int i = 0; i < musicList.size(); i++) {

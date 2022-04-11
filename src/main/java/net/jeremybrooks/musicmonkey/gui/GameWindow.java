@@ -335,7 +335,8 @@ public class GameWindow extends MusicMonkeyFrame {
         List<Song> songs = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
             Path songPath = availableSongList.remove(ThreadLocalRandom.current().nextInt(0, availableSongList.size()));
-            songs.add(new Song(songPath));
+            // TODO  this comes from the database
+//            songs.add(new Song(songPath));
         }
         selectedSong = ThreadLocalRandom.current().nextInt(0, 4);
 

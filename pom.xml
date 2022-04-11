@@ -44,6 +44,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <!-- library versions -->
+        <derby.version>10.15.2.0</derby.version>
         <log4j.version>2.17.1</log4j.version>
         <pressplay.version>1.0.3</pressplay.version>
         <junit.version>4.13.2</junit.version>
@@ -81,23 +82,16 @@
             <version>${pressplay.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derby</artifactId>
+            <version>${derby.version}</version>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
-        <!-- tika-core brings in commons-io -->
-<!--        <dependency>-->
-<!--            <groupId>org.apache.tika</groupId>-->
-<!--            <artifactId>tika-core</artifactId>-->
-<!--            <version>${tika-core.version}</version>-->
-<!--        </dependency>-->
-        <!-- tika-parser-advancedmedia-module brings in junit -->
-<!--        <dependency>-->
-<!--            <groupId>org.apache.tika</groupId>-->
-<!--            <artifactId>tika-parser-advancedmedia-module</artifactId>-->
-<!--            <version>${tika-parser-advancedmedia-module.version}</version>-->
-<!--        </dependency>-->
     </dependencies>
 
     <build>

@@ -47,9 +47,9 @@ public class GetMusicWorker extends SwingWorker<List<Path>, Void> {
         List<Path> availableSongList = null;
         Path musicDir;
         if (GameState.getInstance().getMusicCategory().equalsIgnoreCase("All Music")) {
-            musicDir = Paths.get(MMConstants.MUSIC_FOLDER);
+            musicDir = Paths.get(MMConstants.MUSIC_DIRECTORY);
         } else {
-            musicDir = Paths.get(MMConstants.MUSIC_FOLDER, GameState.getInstance().getMusicCategory());
+            musicDir = Paths.get(MMConstants.MUSIC_DIRECTORY, GameState.getInstance().getMusicCategory());
         }
         MusicLister lister = new MusicLister();
         try {
