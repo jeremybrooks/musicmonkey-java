@@ -92,7 +92,7 @@ public class MusicSelectionWindow extends MusicMonkeyFrame {
     }
 
 
-    musicList.add("All Music");
+    musicList.add(MMConstants.ALL_MUSIC);
     try {
       musicList.addAll(Files.list(Paths.get(MMConstants.MUSIC_DIRECTORY))
           .filter(Files::isDirectory)

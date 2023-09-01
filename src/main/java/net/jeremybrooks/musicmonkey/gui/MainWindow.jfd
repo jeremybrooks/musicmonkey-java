@@ -1,4 +1,4 @@
-JFDML JFormDesigner: "7.0.5.1.409" Java: "11.0.13" encoding: "UTF-8"
+JFDML JFormDesigner: "7.0.5.1.409" Java: "11.0.14.1" encoding: "UTF-8"
 
 new FormModel {
 	"i18n.autoExternalize": true
@@ -72,7 +72,7 @@ new FormModel {
 			} )
 			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
 				"$columnSpecs": "0"
-				"$rowSpecs": "0, 0, 0, 0, 0"
+				"$rowSpecs": "0, 0, 0, 0"
 				"$hGap": 5
 				"$vGap": 5
 				"$alignLeft": true
@@ -91,7 +91,7 @@ new FormModel {
 				} )
 				add( new FormComponent( "javax.swing.JLabel" ) {
 					name: "lblMusic"
-					"text": "Change Music"
+					"text": "Music: All Music"
 					"font": #SwingDerivedFont0
 					auxiliary() {
 						"JavaCodeGenerator.postCreateCode": "lblMusic.setIcon(MMConstants.BUTTON_1);"
@@ -101,12 +101,15 @@ new FormModel {
 					"insets": new java.awt.Insets( 0, 50, 0, 0 )
 				} )
 				add( new FormComponent( "javax.swing.JLabel" ) {
-					name: "lblMusicSelection"
-					"text": new FormMessage( null, "MainWindow.lblMusicSelection.text" )
-					"font": new com.jformdesigner.model.SwingDerivedFont( "Monoton", 0, 24, true )
+					name: "lblPlayTo"
+					"text": new FormMessage( null, "MainWindow.lblPlayTo.text" )
+					"font": new com.jformdesigner.model.SwingDerivedFont( "Monoton", 0, 30, true )
+					auxiliary() {
+						"JavaCodeGenerator.postCreateCode": "lblPlayTo.setIcon(MMConstants.BUTTON_2);"
+					}
 				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 					"gridy": 2
-					"insets": new java.awt.Insets( 0, 160, 0, 0 )
+					"insets": new java.awt.Insets( 0, 50, 0, 0 )
 				} )
 				add( new FormComponent( "javax.swing.JLabel" ) {
 					name: "lblSomething"

@@ -45,8 +45,8 @@
 
         <!-- library versions -->
         <derby.version>10.15.2.0</derby.version>
-        <log4j.version>2.17.1</log4j.version>
-        <pressplay.version>1.0.3</pressplay.version>
+        <pressplay.version>1.0.8</pressplay.version>
+        <log4j.version>2.20.0</log4j.version>
         <junit.version>4.13.2</junit.version>
 
         <!-- plugin versions -->
@@ -95,6 +95,26 @@
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>${project.basedir}</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>${project.artifactId}.install4j</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+                <includes>
+                    <include>**/*.ttf</include>
+                    <include>**/*.properties</include>
+                    <include>**/*.png</include>
+                    <include>log4j2.xml</include>
+                    <include>LICENSE</include>
+                </includes>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -138,6 +158,9 @@
                 <version>${maven-jar-plugin.version}</version>
                 <inherited>true</inherited>
                 <configuration>
+                    <excludes>
+                        <exclude>${project.artifactId}.install4j</exclude>
+                    </excludes>
                     <archive>
                         <manifest>
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
@@ -145,6 +168,23 @@
                         </manifest>
                     </archive>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.sonatype.install4j</groupId>
+                <artifactId>install4j-maven-plugin</artifactId>
+                <version>1.1.2</version>
+                <executions>
+                    <execution>
+                        <id>compile-installers</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                        <configuration>
+                            <projectFile>${project.basedir}/target/classes/${project.artifactId}.install4j</projectFile>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

@@ -32,6 +32,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class DbUtil {
     private static final Logger logger = LogManager.getLogger();
@@ -74,9 +75,30 @@ public class DbUtil {
     private static final String SQL_COUNT_FOR_SONG_ID =
             "SELECT COUNT(*) FROM SONGS WHERE SONG_ID = ?";
 
+    private static final String SQL_GET_UNPLAYED_SONG_IDS_FOR_CATEGORY =
+            "SELECT " +
+                    "SONG_ID " +
+                    "FROM SONGS " +
+                    "WHERE SONG_CATEGORY = ? " +
+                    "AND PLAYED = false";
+    private static final String SQL_GET_ALL_UNPLAYED_SONG_IDS =
+            "SELECT " +
+                    "SONG_ID " +
+                    "FROM SONGS " +
+                    "WHERE PLAYED = false";
+
+    private static final String SQL_MARK_SONG_PLAYED =
+            "UPDATE SONGS " +
+                    "SET PLAYED = true " +
+                    "WHERE SONG_ID = ?";
+
+    private static final String SQL_MARK_ALL_SONGS_UNPLAYED =
+            "UPDATE SONGS " +
+                    "SET PLAYED = false";
+
     private static final String SQL_UPDATE_DB_VERSION = "UPDATE METADATA SET DB_VERSION = ?";
     private static final String SQL_GET_DB_VERSION = "SELECT DB_VERSION FROM METADATA";
-    private static final String SQL_GET_CATEGORIES = "SELECT DISTINCT CATEGORY FROM SONGS ORDER BY CATEGORY";
+    private static final String SQL_GET_CATEGORIES = "SELECT DISTINCT SONG_CATEGORY FROM SONGS ORDER BY SONG_CATEGORY";
     private static final String SQL_DELETE_OLD_SONGS = "DELETE FROM SONGS WHERE REFRESHED = false";
 
     public static void createDatabase() throws SQLException {
@@ -176,7 +198,7 @@ public class DbUtil {
 
     public static List<String> getCategories() throws SQLException {
         List<String> categories = new ArrayList<>();
-        categories.add("All Music");
+        categories.add(MMConstants.ALL_MUSIC);
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(SQL_GET_CATEGORIES);
              ResultSet rs = ps.executeQuery()) {
@@ -190,7 +212,7 @@ public class DbUtil {
     public static Song getSong(int songId) throws SQLException {
         Song song = null;
         try (Connection conn = getConnection();
-        PreparedStatement ps = conn.prepareStatement(SQL_GET_BY_SONG_ID)) {
+             PreparedStatement ps = conn.prepareStatement(SQL_GET_BY_SONG_ID)) {
             ps.setInt(1, songId);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
@@ -207,6 +229,45 @@ public class DbUtil {
         return song;
     }
 
+    public static List<Song> getRandomUnplayedSongs(String category, int count) throws SQLException {
+        logger.debug("Getting {} songs from {}", count, category);
+        List<Song> songs = new ArrayList<>();
+        try (Connection conn = getConnection()) {
+            List<Integer> songIds;
+            if (category.equals(MMConstants.ALL_MUSIC)) {
+                try (PreparedStatement ps = conn.prepareStatement(SQL_GET_ALL_UNPLAYED_SONG_IDS);
+                     ResultSet rs = ps.executeQuery()) {
+                    songIds = getSongIds(rs);
+                }
+            } else {
+                try (PreparedStatement ps = conn.prepareStatement(SQL_GET_UNPLAYED_SONG_IDS_FOR_CATEGORY)) {
+                    ps.setString(1, category);
+                    try (ResultSet rs = ps.executeQuery()) {
+                        songIds = getSongIds(rs);
+                    }
+                }
+            }
+            if (songIds.size() < count) {
+                throw new SQLException("Not enough songs. Requested " + count + " but only " +
+                        songIds.size() + " available.");
+            }
+            for (int i = 0; i < count; i++) {
+                int index = ThreadLocalRandom.current().nextInt(songIds.size());
+                songs.add(getSong(songIds.get(index)));
+                songIds.remove(index);
+            }
+        }
+        return songs;
+    }
+
+    private static List<Integer> getSongIds(ResultSet rs) throws SQLException {
+        List<Integer> songIds = new ArrayList<>();
+        while (rs.next()) {
+            songIds.add(rs.getInt("SONG_ID"));
+        }
+        return songIds;
+    }
+
     public static int deleteOldSongs() throws SQLException {
         int count;
         try (Connection conn = getConnection();
@@ -215,6 +276,23 @@ public class DbUtil {
             logger.debug("Deleted {} songs.", count);
         }
         return count;
+    }
+
+    public static void markSongPlayed(int songId) throws SQLException {
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(SQL_MARK_SONG_PLAYED)) {
+            ps.setInt(1, songId);
+            int count = ps.executeUpdate();
+            logger.debug("Marked song {} as played. {} row changed.", songId, count);
+        }
+    }
+
+    public static void markAllSongsUnplayed() throws SQLException {
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(SQL_MARK_ALL_SONGS_UNPLAYED)) {
+            int count = ps.executeUpdate();
+            logger.debug("Marked {} songs as unplayed.", count);
+        }
     }
 
     public static void shutdown() {

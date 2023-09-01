@@ -26,7 +26,7 @@ package net.jeremybrooks.musicmonkey.gui;
 import net.jeremybrooks.musicmonkey.GameState;
 import net.jeremybrooks.musicmonkey.MMConstants;
 import net.jeremybrooks.musicmonkey.Song;
-import net.jeremybrooks.musicmonkey.worker.GetMusicWorker;
+import net.jeremybrooks.musicmonkey.db.DbUtil;
 import net.jeremybrooks.pressplay.FFPlay;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -34,6 +34,7 @@ import org.apache.logging.log4j.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
@@ -46,7 +47,6 @@ import java.awt.event.KeyEvent;
 import java.io.Serial;
 import java.nio.file.Path;
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -68,22 +68,33 @@ public class GameWindow extends MusicMonkeyFrame {
 
     private final GameState gameState = GameState.getInstance();
     private boolean musicPlaying = false;
-    private List<Path> availableSongList;
     private final DefaultListModel<Song> songListModel = new DefaultListModel<>();
     private int selectedSong = 0;
     private FFPlay<Path> songPlayer;
     private Timer scoreTimer;
     private final Map<GameState.PlayerId, JLabel> playerScores = new HashMap<>();
+    private final Map<GameState.PlayerId, JLabel> playerAdds = new HashMap<>();
     private final Color scoreColor;
+    private final WinnerWindow winnerWindow;
 
     public GameWindow(MusicMonkeyFrame ancestor) {
         super(ancestor);
         initComponents();
+
         scoreColor = lblP1Score.getForeground();
         playerScores.put(GameState.PlayerId.ONE, lblP1Score);
         playerScores.put(GameState.PlayerId.TWO, lblP2Score);
         playerScores.put(GameState.PlayerId.THREE, lblP3Score);
         playerScores.put(GameState.PlayerId.FOUR, lblP4Score);
+
+        playerAdds.put(GameState.PlayerId.ONE, lblP1Add);
+        playerAdds.put(GameState.PlayerId.TWO, lblP2Add);
+        playerAdds.put(GameState.PlayerId.THREE, lblP3Add);
+        playerAdds.put(GameState.PlayerId.FOUR, lblP4Add);
+
+        playerAdds.forEach((playerId, jLabel) -> jLabel.setText(" "));
+
+        winnerWindow = new WinnerWindow(this);
     }
 
     private void initComponents() {
@@ -99,6 +110,10 @@ public class GameWindow extends MusicMonkeyFrame {
         lblTimer = new JLabel();
         panel1 = new JPanel();
         listSongs = new JList();
+        lblP1Add = new JLabel();
+        lblP2Add = new JLabel();
+        lblP3Add = new JLabel();
+        lblP4Add = new JLabel();
         lblMessage = new JLabel();
 
         //======== this ========
@@ -106,19 +121,19 @@ public class GameWindow extends MusicMonkeyFrame {
         var contentPane = getContentPane();
         contentPane.setLayout(new GridBagLayout());
         ((GridBagLayout)contentPane.getLayout()).columnWidths = new int[] {0, 0, 0, 0};
-        ((GridBagLayout)contentPane.getLayout()).rowHeights = new int[] {0, 0, 0, 0, 0};
+        ((GridBagLayout)contentPane.getLayout()).rowHeights = new int[] {0, 0, 0, 0, 0, 0, 0};
         ((GridBagLayout)contentPane.getLayout()).columnWeights = new double[] {0.0, 0.0, 0.0, 1.0E-4};
-        ((GridBagLayout)contentPane.getLayout()).rowWeights = new double[] {0.0, 0.0, 0.0, 0.0, 1.0E-4};
+        ((GridBagLayout)contentPane.getLayout()).rowWeights = new double[] {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0E-4};
         contentPane.add(lblP1, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
             GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,
             new Insets(10, 10, 15, 15), 0, 0));
         contentPane.add(lblP2, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0,
             GridBagConstraints.NORTHEAST, GridBagConstraints.NONE,
             new Insets(10, 10, 15, 10), 0, 0));
-        contentPane.add(lblP3, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0,
+        contentPane.add(lblP3, new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0,
             GridBagConstraints.SOUTHWEST, GridBagConstraints.NONE,
             new Insets(10, 10, 10, 15), 0, 0));
-        contentPane.add(lblP4, new GridBagConstraints(2, 3, 1, 1, 0.0, 0.0,
+        contentPane.add(lblP4, new GridBagConstraints(2, 5, 1, 1, 0.0, 0.0,
             GridBagConstraints.SOUTHEAST, GridBagConstraints.NONE,
             new Insets(10, 10, 10, 10), 0, 0));
 
@@ -142,7 +157,7 @@ public class GameWindow extends MusicMonkeyFrame {
         lblP3Score.setText("0");
         lblP3Score.setHorizontalAlignment(SwingConstants.CENTER);
         lblP3Score.setFont(new Font("Monoton", lblP3Score.getFont().getStyle(), 32));
-        contentPane.add(lblP3Score, new GridBagConstraints(0, 2, 1, 1, 0.0, 1.0,
+        contentPane.add(lblP3Score, new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0,
             GridBagConstraints.SOUTH, GridBagConstraints.HORIZONTAL,
             new Insets(0, 0, 5, 5), 0, 0));
 
@@ -150,7 +165,7 @@ public class GameWindow extends MusicMonkeyFrame {
         lblP4Score.setText("0");
         lblP4Score.setHorizontalAlignment(SwingConstants.CENTER);
         lblP4Score.setFont(new Font("Monoton", lblP4Score.getFont().getStyle(), 32));
-        contentPane.add(lblP4Score, new GridBagConstraints(2, 2, 1, 1, 0.0, 0.0,
+        contentPane.add(lblP4Score, new GridBagConstraints(2, 4, 1, 1, 0.0, 0.0,
             GridBagConstraints.SOUTH, GridBagConstraints.HORIZONTAL,
             new Insets(0, 0, 5, 0), 0, 0));
 
@@ -177,15 +192,47 @@ public class GameWindow extends MusicMonkeyFrame {
                 GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                 new Insets(0, 0, 0, 0), 0, 0));
         }
-        contentPane.add(panel1, new GridBagConstraints(1, 1, 1, 2, 1.0, 0.0,
+        contentPane.add(panel1, new GridBagConstraints(1, 1, 1, 4, 1.0, 0.0,
             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
             new Insets(0, 0, 5, 5), 0, 0));
+
+        //---- lblP1Add ----
+        lblP1Add.setText("0");
+        lblP1Add.setFont(new Font("Monoton", Font.PLAIN, 32));
+        lblP1Add.setHorizontalAlignment(SwingConstants.CENTER);
+        contentPane.add(lblP1Add, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0,
+            GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+            new Insets(0, 0, 5, 5), 0, 0));
+
+        //---- lblP2Add ----
+        lblP2Add.setText("0");
+        lblP2Add.setFont(new Font("Monoton", Font.PLAIN, 32));
+        lblP2Add.setHorizontalAlignment(SwingConstants.CENTER);
+        contentPane.add(lblP2Add, new GridBagConstraints(2, 2, 1, 1, 0.0, 0.0,
+            GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+            new Insets(0, 0, 5, 0), 0, 0));
+
+        //---- lblP3Add ----
+        lblP3Add.setText("0");
+        lblP3Add.setFont(new Font("Monoton", Font.PLAIN, 32));
+        lblP3Add.setHorizontalAlignment(SwingConstants.CENTER);
+        contentPane.add(lblP3Add, new GridBagConstraints(0, 3, 1, 1, 0.0, 1.0,
+            GridBagConstraints.SOUTH, GridBagConstraints.HORIZONTAL,
+            new Insets(0, 0, 5, 5), 0, 0));
+
+        //---- lblP4Add ----
+        lblP4Add.setText("0");
+        lblP4Add.setFont(new Font("Monoton", Font.PLAIN, 32));
+        lblP4Add.setHorizontalAlignment(SwingConstants.CENTER);
+        contentPane.add(lblP4Add, new GridBagConstraints(2, 3, 1, 1, 0.0, 0.0,
+            GridBagConstraints.SOUTH, GridBagConstraints.HORIZONTAL,
+            new Insets(0, 0, 5, 0), 0, 0));
 
         //---- lblMessage ----
         lblMessage.setText(" ");
         lblMessage.setFont(new Font("Monoton", lblMessage.getFont().getStyle(), 32));
         lblMessage.setHorizontalAlignment(SwingConstants.CENTER);
-        contentPane.add(lblMessage, new GridBagConstraints(1, 3, 1, 1, 0.0, 0.0,
+        contentPane.add(lblMessage, new GridBagConstraints(1, 5, 1, 1, 0.0, 0.0,
             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
             new Insets(0, 0, 0, 5), 0, 0));
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
@@ -283,8 +330,6 @@ public class GameWindow extends MusicMonkeyFrame {
 
     @Override
     public void push() {
-        // get music list in the background - this can take some time
-        new GetMusicWorker(this).execute();
 
         setPlayerIcons();
         lblP1Score.setEnabled(gameState.isPlayerJoined(GameState.PlayerId.ONE));
@@ -292,15 +337,25 @@ public class GameWindow extends MusicMonkeyFrame {
         lblP3Score.setEnabled(gameState.isPlayerJoined(GameState.PlayerId.THREE));
         lblP4Score.setEnabled(gameState.isPlayerJoined(GameState.PlayerId.FOUR));
         super.push();
+
+        if (GameState.getInstance().isGameOver()) {
+            pop();
+        } else {
+            try {
+                DbUtil.markAllSongsUnplayed();
+                startGame();
+            } catch (Exception e) {
+                logger.error("Error while marking songs unplayed.", e);
+                showError("Error while marking songs unplayed. See logs.");
+            }
+        }
     }
 
     private void setScores() {
-        SwingUtilities.invokeLater(() -> {
-            playerScores.forEach((playerId, jLabel) -> {
-                jLabel.setForeground(scoreColor);
-                jLabel.setText(Integer.toString(gameState.getPlayerScore(playerId)));
-            });
-        });
+        SwingUtilities.invokeLater(() -> playerScores.forEach((playerId, jLabel) -> {
+            jLabel.setForeground(scoreColor);
+            jLabel.setText(Integer.toString(gameState.getPlayerScore(playerId)));
+        }));
     }
 
     private void setPlayerIcons() {
@@ -332,29 +387,31 @@ public class GameWindow extends MusicMonkeyFrame {
         setScores();
         gameState.resetActiveFlagForJoinedPlayers();
         SwingUtilities.invokeLater(songListModel::clear);
-        List<Song> songs = new ArrayList<>();
-        for (int i = 0; i < 4; i++) {
-            Path songPath = availableSongList.remove(ThreadLocalRandom.current().nextInt(0, availableSongList.size()));
-            // TODO  this comes from the database
-//            songs.add(new Song(songPath));
+        try {
+            List<Song> songs = DbUtil.getRandomUnplayedSongs(GameState.getInstance().getMusicCategory(), 4);
+
+            selectedSong = ThreadLocalRandom.current().nextInt(0, 4);
+            DbUtil.markSongPlayed(songs.get(selectedSong).getSongId());
+
+            Path songPath = songs.get(selectedSong).getSongPath();
+            songPlayer = new FFPlay.Builder<Path>()
+                    .media(songPath)
+                    .build();
+            songPlayer.setSeekTime(calculateSeekTime(songPlayer.getMediaMetadata().getDuration()));
+            songPlayer.play();
+            musicPlaying = true;
+
+            SwingUtilities.invokeLater(() -> {
+                songs.forEach(songListModel::addElement);
+                songListModel.get(selectedSong).setPlaying(true);
+            });
+
+            scoreTimer = new Timer();
+            scoreTimer.schedule(new Countdown(), 0, ROUND_TIME_MILLIS / STARTING_SCORE);
+        } catch (Exception e) {
+            logger.error("Error getting songs.", e);
+            showError("Error getting songs. See logs.");
         }
-        selectedSong = ThreadLocalRandom.current().nextInt(0, 4);
-
-        Path songPath = songs.get(selectedSong).getSongPath();
-        songPlayer = new FFPlay.Builder<Path>()
-                .media(songPath)
-                .build();
-        songPlayer.setSeekTime(calculateSeekTime(songPlayer.getMediaMetadata().getDuration()));
-        songPlayer.play();
-        musicPlaying = true;
-
-        SwingUtilities.invokeLater(() -> {
-            songs.forEach(songListModel::addElement);
-            songListModel.get(selectedSong).setPlaying(true);
-        });
-
-        scoreTimer = new Timer();
-        scoreTimer.schedule(new Countdown(), 0, ROUND_TIME_MILLIS / STARTING_SCORE);
     }
 
     private Duration calculateSeekTime(Duration duration) {
@@ -396,16 +453,6 @@ public class GameWindow extends MusicMonkeyFrame {
             song.hide();
             songListModel.setElementAt(song, songIndex);
         });
-    }
-
-    public void showMessage(String message) {
-        if (null != message) {
-            SwingUtilities.invokeLater(() -> lblMessage.setText(message));
-        }
-    }
-
-    public void setAvailableSongList(List<Path> availableSongList) {
-        this.availableSongList = availableSongList;
     }
 
     /*
@@ -453,6 +500,10 @@ public class GameWindow extends MusicMonkeyFrame {
         }
     }
 
+    private void showError(String error) {
+        JOptionPane.showMessageDialog(this,
+                error, "ERROR", JOptionPane.ERROR_MESSAGE);
+    }
 
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
     private JLabel lblP1;
@@ -466,6 +517,10 @@ public class GameWindow extends MusicMonkeyFrame {
     private JLabel lblTimer;
     private JPanel panel1;
     private JList listSongs;
+    private JLabel lblP1Add;
+    private JLabel lblP2Add;
+    private JLabel lblP3Add;
+    private JLabel lblP4Add;
     private JLabel lblMessage;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 
@@ -483,33 +538,63 @@ public class GameWindow extends MusicMonkeyFrame {
             showCorrectAnswer();
             final int points = Integer.parseInt(lblTimer.getText());
             logger.info("Player {} gets {} points", player, points);
-            int newScore = gameState.addPlayerPoints(player, points);
             SwingUtilities.invokeLater(() ->
                     lblTimer.setText(String.format("%d points to player %s", points, player.name())));
+            JLabel addLabel = playerAdds.get(player);
             JLabel scoreLabel = playerScores.get(player);
             SwingUtilities.invokeLater(() -> {
-                scoreLabel.setForeground(MMConstants.COLOR_CORRECT_GUESS);
-                scoreLabel.setText("+" + points);
+                addLabel.setForeground(MMConstants.COLOR_CORRECT_GUESS);
+                addLabel.setText(String.valueOf(points));
             });
-
-            for (int i = 5; i > 0; i--) {
-                int finalI = i;
-                SwingUtilities.invokeLater(() -> lblMessage.setText(String.format("Next round in %d...", finalI)));
+            int p = points;
+            while (p > 0) {
+                int score = gameState.addPlayerPoints(player, 1);
+                int finalP = p;
+                SwingUtilities.invokeLater(() -> {
+                    addLabel.setText(String.valueOf(finalP));
+                    scoreLabel.setText(String.valueOf(score));
+                });
+                // todo play sound
+                p--;
                 try {
-                    Thread.sleep(1000);
-                    if (i == 3) {
-                        SwingUtilities.invokeLater(() -> {
-                            scoreLabel.setForeground(scoreColor);
-                            scoreLabel.setText(Integer.toString(newScore));
-                        });
-                    }
-                } catch (InterruptedException ie) {
-                    logger.error("Interrupted", ie);
+                    Thread.sleep(MMConstants.MILLIS_BETWEEN_POINTS);
+                } catch (InterruptedException e) {
+                    //throw new RuntimeException(e);
                 }
             }
-            songPlayer.stop();
-            startGame();
-            SwingUtilities.invokeLater(() -> lblMessage.setText(" "));
+            SwingUtilities.invokeLater(() -> {
+                addLabel.setText(" ");
+//                scoreLabel.setForeground(MMConstants.COLOR_CORRECT_GUESS);
+//                scoreLabel.setText("+" + points);
+            });
+//            int newScore = gameState.addPlayerPoints(player, points);
+            int newScore = gameState.getPlayerScore(player);
+            if (newScore >= GameState.getInstance().getWinningScore()) {
+                GameState.getInstance().setGameOver(true);
+                songPlayer.stop();
+                // todo play winning music
+                winnerWindow.setWinner(player);
+                winnerWindow.push();
+            } else {
+                for (int i = 5; i > 0; i--) {
+                    int finalI = i;
+                    SwingUtilities.invokeLater(() -> lblMessage.setText(String.format("Next round in %d...", finalI)));
+                    try {
+                        Thread.sleep(1000);
+                        if (i == 3) {
+                            SwingUtilities.invokeLater(() -> {
+                                scoreLabel.setForeground(scoreColor);
+                                scoreLabel.setText(Integer.toString(newScore));
+                            });
+                        }
+                    } catch (InterruptedException ie) {
+                        logger.error("Interrupted", ie);
+                    }
+                }
+                songPlayer.stop();
+                startGame();
+                SwingUtilities.invokeLater(() -> lblMessage.setText(" "));
+            }
         }
     }
 
@@ -524,25 +609,33 @@ public class GameWindow extends MusicMonkeyFrame {
             gameState.setPlayerActive(player, false);
             final int points = Integer.parseInt(lblTimer.getText());
             final String negativePoints = Integer.toString(-points);
-            gameState.subtractPlayerPoints(player, points);
+
             logger.info("Player {} loses {} points", player, points);
+            JLabel addLabel = playerAdds.get(player);
             JLabel scoreLabel = playerScores.get(player);
             SwingUtilities.invokeLater(() -> {
-                scoreLabel.setForeground(MMConstants.COLOR_WRONG_GUESS);
-                scoreLabel.setText(negativePoints);
+                addLabel.setForeground(MMConstants.COLOR_WRONG_GUESS);
+                addLabel.setText(String.valueOf(points));
             });
-            try {
-                Thread.sleep(2000);
-            } catch (Exception e) {
-                logger.warn("Interrupted while waiting");
-            } finally {
-                if (scoreLabel.getText().equals(negativePoints)) {
-                    SwingUtilities.invokeLater(() -> {
-                        scoreLabel.setForeground(scoreColor);
-                        scoreLabel.setText(Integer.toString(gameState.getPlayerScore(player)));
-                    });
+            int p = points;
+            while (p > 0) {
+                int score = gameState.subtractPlayerPoints(player, 1);
+                int finalP = p;
+                SwingUtilities.invokeLater(() -> {
+                    addLabel.setText(String.valueOf(finalP));
+                    scoreLabel.setText(String.valueOf(score));
+                });
+                // todo play sound?
+                p--;
+                try {
+                    Thread.sleep(MMConstants.MILLIS_BETWEEN_POINTS);
+                } catch (InterruptedException e) {
+                    //throw new RuntimeException(e);
                 }
             }
+            SwingUtilities.invokeLater(() -> {
+                addLabel.setText(" ");
+            });;
         }
     }
 

@@ -95,4 +95,8 @@ public class MMConstants {
 
   public static final String MUSIC_DIRECTORY = System.getProperty("user.home") + "/MusicMonkeyMusic";
   public static final String MUSIC_DB = System.getProperty("user.home") + "/MusicMonkeyDB/derbyDB";
+
+  public static final String ALL_MUSIC = "All Music";
+
+  public static final long MILLIS_BETWEEN_POINTS = 20;
 }

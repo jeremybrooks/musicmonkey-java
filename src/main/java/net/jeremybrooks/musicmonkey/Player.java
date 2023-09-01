@@ -21,7 +21,15 @@ package net.jeremybrooks.musicmonkey;
 
 public class Player {
 
+    /*
+    Joined means the player has joined the game on the main screen and
+    the application should process input from that player during the game.
+     */
     private boolean joined;
+    /*
+    Active means the player has not made a guess during the round and the
+    application should process input from that player during the round.
+     */
     private boolean active;
     private int score;
 
@@ -53,5 +61,9 @@ public class Player {
 
     public void setScore(int score) {
         this.score = score;
+    }
+
+    public void togglePlayerJoined() {
+        joined = !joined;
     }
 }

@@ -19,6 +19,7 @@
 
 package net.jeremybrooks.musicmonkey;
 
+import javax.swing.Icon;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,11 +27,29 @@ import static net.jeremybrooks.musicmonkey.GameState.PlayerId.*;
 
 public class GameState {
 
+
+
   public enum PlayerId {
-    ONE,
-    TWO,
-    THREE,
-    FOUR
+    ONE(MMConstants.ICON_P1, MMConstants.ICON_P1_OFF),
+    TWO(MMConstants.ICON_P2, MMConstants.ICON_P2_OFF),
+    THREE(MMConstants.ICON_P3, MMConstants.ICON_P3_OFF),
+    FOUR(MMConstants.ICON_P4, MMConstants.ICON_P4_OFF);
+
+    private final Icon iconOn;
+    private final Icon iconOff;
+
+    PlayerId(Icon iconOn, Icon iconOff) {
+      this.iconOn = iconOn;
+      this.iconOff = iconOff;
+    }
+
+    public Icon getIconOn() {
+      return iconOn;
+    }
+
+    public Icon getIconOff() {
+      return iconOff;
+    }
   }
 
   private static GameState instance;
@@ -39,7 +58,10 @@ public class GameState {
   private boolean player2Joined;
   private boolean player3Joined;
   private boolean player4Joined;
-  private String musicCategory = "All Music";
+  private String musicCategory = MMConstants.ALL_MUSIC;
+
+  private int winningScore = 250;
+  private boolean gameOver = false;
 
   public GameState() {
     players.put(ONE, new Player());
@@ -106,4 +128,37 @@ public class GameState {
   public String getMusicCategory() { return this.musicCategory; }
   public void setMusicCategory(String musicCategory) { this.musicCategory = musicCategory; }
 
+  public void updateWinningScore() {
+    winningScore = winningScore * 2;
+    if (winningScore > 2000) {
+      winningScore = 250;
+    }
+  }
+  public int getWinningScore() {
+    return winningScore;
+  }
+
+  public void setWinningScore(int winningScore) {
+    this.winningScore = winningScore;
+  }
+
+  public boolean isGameOver() {
+    return gameOver;
+  }
+
+  public void setGameOver(boolean gameOver) {
+    this.gameOver = gameOver;
+  }
+
+  public Icon getIcon(PlayerId player) {
+    if (isPlayerJoined(player)) {
+      return player.getIconOn();
+    } else {
+      return player.getIconOff();
+    }
+  }
+
+  public void togglePlayerJoinedState(PlayerId playerId) {
+    players.get(playerId).togglePlayerJoined();
+  }
 }

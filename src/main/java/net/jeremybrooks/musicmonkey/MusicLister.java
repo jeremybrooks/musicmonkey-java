@@ -42,7 +42,7 @@ public class MusicLister implements FileVisitor<Path> {
 
   @Override
   public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-    selectedCategory =  musicCategory.equalsIgnoreCase("All Music") ||
+    selectedCategory =  musicCategory.equalsIgnoreCase(MMConstants.ALL_MUSIC) ||
         dir.getFileName().toString().equals(musicCategory);
     return FileVisitResult.CONTINUE;
   }

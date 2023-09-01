@@ -1,11 +1,11 @@
-JFDML JFormDesigner: "7.0.5.1.409" Java: "11.0.13" encoding: "UTF-8"
+JFDML JFormDesigner: "8.1.1.0.298" Java: "17.0.7" encoding: "UTF-8"
 
 new FormModel {
 	contentType: "form/swing"
 	root: new FormRoot {
 		add( new FormWindow( "javax.swing.JFrame", new FormLayoutManager( class java.awt.GridBagLayout ) {
 			"$columnSpecs": "0, 0, 0"
-			"$rowSpecs": "0, 0, 0, 0"
+			"$rowSpecs": "0, 0, 0, 0, 0, 0"
 			"$hGap": 5
 			"$vGap": 5
 			"$alignLeft": true
@@ -33,7 +33,7 @@ new FormModel {
 			add( new FormComponent( "javax.swing.JLabel" ) {
 				name: "lblP3"
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-				"gridy": 3
+				"gridy": 5
 				"insets": new java.awt.Insets( 10, 10, 10, 10 )
 				"hAlign": 2
 				"vAlign": 3
@@ -42,7 +42,7 @@ new FormModel {
 				name: "lblP4"
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 				"gridx": 2
-				"gridy": 3
+				"gridy": 5
 				"hAlign": 4
 				"vAlign": 3
 				"insets": new java.awt.Insets( 10, 10, 10, 10 )
@@ -72,9 +72,8 @@ new FormModel {
 				"horizontalAlignment": 0
 				"font": #SwingDerivedFont0
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-				"gridy": 2
+				"gridy": 4
 				"vAlign": 3
-				"weighty": 1.0
 			} )
 			add( new FormComponent( "javax.swing.JLabel" ) {
 				name: "lblP4Score"
@@ -83,7 +82,7 @@ new FormModel {
 				"font": #SwingDerivedFont0
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 				"gridx": 2
-				"gridy": 2
+				"gridy": 4
 				"vAlign": 3
 			} )
 			add( new FormComponent( "javax.swing.JLabel" ) {
@@ -117,7 +116,44 @@ new FormModel {
 				"gridx": 1
 				"weightx": 1.0
 				"gridy": 1
-				"gridheight": 2
+				"gridheight": 4
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "lblP1Add"
+				"text": "0"
+				"font": new java.awt.Font( "Monoton", 0, 32 )
+				"horizontalAlignment": 0
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+				"gridy": 2
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "lblP2Add"
+				"text": "0"
+				"font": new java.awt.Font( "Monoton", 0, 32 )
+				"horizontalAlignment": 0
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+				"gridx": 2
+				"gridy": 2
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "lblP3Add"
+				"text": "0"
+				"font": new java.awt.Font( "Monoton", 0, 32 )
+				"horizontalAlignment": 0
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+				"gridy": 3
+				"weighty": 1.0
+				"vAlign": 3
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "lblP4Add"
+				"text": "0"
+				"font": new java.awt.Font( "Monoton", 0, 32 )
+				"horizontalAlignment": 0
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+				"gridx": 2
+				"gridy": 3
+				"vAlign": 3
 			} )
 			add( new FormComponent( "javax.swing.JLabel" ) {
 				name: "lblMessage"
@@ -126,7 +162,7 @@ new FormModel {
 				"horizontalAlignment": 0
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 				"gridx": 1
-				"gridy": 3
+				"gridy": 5
 			} )
 		}, new FormLayoutConstraints( null ) {
 			"location": new java.awt.Point( 0, 0 )

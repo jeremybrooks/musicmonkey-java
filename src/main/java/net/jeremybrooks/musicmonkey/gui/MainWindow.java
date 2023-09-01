@@ -23,6 +23,7 @@
 
 package net.jeremybrooks.musicmonkey.gui;
 
+import javax.swing.*;
 import net.jeremybrooks.musicmonkey.GameState;
 import net.jeremybrooks.musicmonkey.MMConstants;
 import net.jeremybrooks.musicmonkey.db.DbUtil;
@@ -62,15 +63,13 @@ public class MainWindow extends MusicMonkeyFrame {
   public MainWindow(MusicMonkeyFrame ancestor) {
     super(ancestor);
     initComponents();
-    setUndecorated(true);
-    setSize(1024, 600);
-    setLocation(0, 0);
     musicSelectionWindow = new MusicSelectionWindow(this);
     gameWindow = new GameWindow(this);
   }
 
   @Override
   public void handleKeypress(KeyEvent e) {
+    logger.debug("Got keypress {}", e.getKeyChar());
     switch (e.getKeyChar()) {
 
       case '0':
@@ -79,24 +78,22 @@ public class MainWindow extends MusicMonkeyFrame {
         break;
 
       case MMConstants.P1B1:
-        GameState.getInstance().setPlayerJoined(GameState.PlayerId.ONE, !GameState.getInstance().isPlayerJoined(GameState.PlayerId.ONE));
-        lblP1.setIcon(GameState.getInstance().isPlayerJoined(GameState.PlayerId.ONE)
-            ? MMConstants.ICON_P1 : MMConstants.ICON_P1_OFF);
+        GameState.getInstance().togglePlayerJoinedState(GameState.PlayerId.ONE);
+        logger.info("Player 1 game state is {}", GameState.getInstance().isPlayerJoined(GameState.PlayerId.ONE));
+        logger.info("Icon is {}", GameState.getInstance().getIcon(GameState.PlayerId.ONE));
+        lblP1.setIcon(GameState.getInstance().getIcon(GameState.PlayerId.ONE));
         break;
       case MMConstants.P2B1:
-        GameState.getInstance().setPlayerJoined(GameState.PlayerId.TWO, !GameState.getInstance().isPlayerJoined(GameState.PlayerId.TWO));
-        lblP2.setIcon(GameState.getInstance().isPlayerJoined(GameState.PlayerId.TWO)
-          ? MMConstants.ICON_P2 : MMConstants.ICON_P2_OFF);
+        GameState.getInstance().togglePlayerJoinedState(GameState.PlayerId.TWO);
+        lblP2.setIcon(GameState.getInstance().getIcon(GameState.PlayerId.TWO));
         break;
       case MMConstants.P3B1:
-        GameState.getInstance().setPlayerJoined(GameState.PlayerId.THREE, !GameState.getInstance().isPlayerJoined(GameState.PlayerId.THREE));
-        lblP3.setIcon(GameState.getInstance().isPlayerJoined(GameState.PlayerId.THREE)
-            ? MMConstants.ICON_P3 : MMConstants.ICON_P3_OFF);
+        GameState.getInstance().togglePlayerJoinedState(GameState.PlayerId.THREE);
+        lblP3.setIcon(GameState.getInstance().getIcon(GameState.PlayerId.THREE));
         break;
       case MMConstants.P4B1:
-        GameState.getInstance().setPlayerJoined(GameState.PlayerId.FOUR, !GameState.getInstance().isPlayerJoined(GameState.PlayerId.FOUR));
-        lblP4.setIcon(GameState.getInstance().isPlayerJoined(GameState.PlayerId.FOUR)
-            ? MMConstants.ICON_P4 : MMConstants.ICON_P4_OFF);
+        GameState.getInstance().togglePlayerJoinedState(GameState.PlayerId.FOUR);
+        lblP4.setIcon(GameState.getInstance().getIcon(GameState.PlayerId.FOUR));
         break;
 
       case MMConstants.P1B2:
@@ -111,6 +108,8 @@ public class MainWindow extends MusicMonkeyFrame {
       case MMConstants.P2B3:
       case MMConstants.P3B3:
       case MMConstants.P4B3:
+        GameState.getInstance().updateWinningScore();
+        updateLabels();
         break;
 
       case MMConstants.P1B4:
@@ -120,15 +119,23 @@ public class MainWindow extends MusicMonkeyFrame {
         if (GameState.getInstance().getPlayerCount() == 0) {
           showMessage("No players have joined!", Duration.ofSeconds(5));
         } else {
+          GameState.getInstance().setGameOver(false);
           gameWindow.push();
         }
         break;
     }
   }
 
+  private void updateLabels() {
+    SwingUtilities.invokeLater(() -> {
+    lblMusic.setText("Music: " + GameState.getInstance().getMusicCategory());
+    lblPlayTo.setText("Play to " + GameState.getInstance().getWinningScore() + " points");
+    });
+  }
+
   @Override
   public void push() {
-    lblMusicSelection.setText("Current music: " + GameState.getInstance().getMusicCategory());
+    updateLabels();
     super.push();
   }
   
@@ -164,7 +171,8 @@ public class MainWindow extends MusicMonkeyFrame {
     lblJoin.setIcon(MMConstants.BUTTON_0);
     lblMusic = new JLabel();
     lblMusic.setIcon(MMConstants.BUTTON_1);
-    lblMusicSelection = new JLabel();
+    lblPlayTo = new JLabel();
+    lblPlayTo.setIcon(MMConstants.BUTTON_2);
     lblSomething = new JLabel();
     lblSomething.setIcon(MMConstants.BUTTON_3);
     lblMessage = new JLabel();
@@ -202,9 +210,9 @@ public class MainWindow extends MusicMonkeyFrame {
     {
         panel1.setLayout(new GridBagLayout());
         ((GridBagLayout)panel1.getLayout()).columnWidths = new int[] {0, 0};
-        ((GridBagLayout)panel1.getLayout()).rowHeights = new int[] {0, 0, 0, 0, 0, 0};
+        ((GridBagLayout)panel1.getLayout()).rowHeights = new int[] {0, 0, 0, 0, 0};
         ((GridBagLayout)panel1.getLayout()).columnWeights = new double[] {0.0, 1.0E-4};
-        ((GridBagLayout)panel1.getLayout()).rowWeights = new double[] {0.0, 0.0, 0.0, 0.0, 0.0, 1.0E-4};
+        ((GridBagLayout)panel1.getLayout()).rowWeights = new double[] {0.0, 0.0, 0.0, 0.0, 1.0E-4};
 
         //---- lblJoin ----
         lblJoin.setText("Join/Leave Game");
@@ -214,25 +222,25 @@ public class MainWindow extends MusicMonkeyFrame {
             new Insets(0, 50, 5, 0), 0, 0));
 
         //---- lblMusic ----
-        lblMusic.setText("Change Music");
+        lblMusic.setText("Music: All Music");
         lblMusic.setFont(new Font("Monoton", lblMusic.getFont().getStyle(), 30));
         panel1.add(lblMusic, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
             new Insets(0, 50, 5, 0), 0, 0));
 
-        //---- lblMusicSelection ----
-        lblMusicSelection.setText(bundle.getString("MainWindow.lblMusicSelection.text"));
-        lblMusicSelection.setFont(new Font("Monoton", lblMusicSelection.getFont().getStyle(), 24));
-        panel1.add(lblMusicSelection, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0,
+        //---- lblPlayTo ----
+        lblPlayTo.setText(bundle.getString("MainWindow.lblPlayTo.text"));
+        lblPlayTo.setFont(new Font("Monoton", lblPlayTo.getFont().getStyle(), 30));
+        panel1.add(lblPlayTo, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0,
             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-            new Insets(0, 160, 5, 0), 0, 0));
+            new Insets(0, 50, 5, 0), 0, 0));
 
         //---- lblSomething ----
         lblSomething.setText(bundle.getString("MainWindow.lblSomething.text"));
         lblSomething.setFont(new Font("Monoton", lblSomething.getFont().getStyle(), 30));
         panel1.add(lblSomething, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0,
             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-            new Insets(0, 50, 5, 0), 0, 0));
+            new Insets(0, 50, 0, 0), 0, 0));
     }
     contentPane.add(panel1, new GridBagConstraints(1, 1, 1, 1, 1.0, 1.0,
         GridBagConstraints.CENTER, GridBagConstraints.BOTH,
@@ -258,7 +266,7 @@ public class MainWindow extends MusicMonkeyFrame {
   private JPanel panel1;
   private JLabel lblJoin;
   private JLabel lblMusic;
-  private JLabel lblMusicSelection;
+  private JLabel lblPlayTo;
   private JLabel lblSomething;
   private JLabel lblMessage;
   // JFormDesigner - End of variables declaration  //GEN-END:variables
